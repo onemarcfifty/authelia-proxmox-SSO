@@ -1,0 +1,182 @@
+# ##############################################
+# ##############################################
+# ##############################################
+# This is the FULL authelia config
+# from the video with all OpenID providers added
+# Please use your own secrets!!!!
+# ##############################################
+# ##############################################
+# ##############################################
+
+
+
+# #######################################
+# authelia config
+# source: https://florianmuller.com
+# #######################################
+
+theme: dark
+default_redirection_url: https://sandbox-auth.example.com/
+
+server:
+  host: 127.0.0.1
+  port: 9091
+  asset_path: /etc/authelia/.assets/
+  tls:
+    key: /etc/authelia/certs/wildcard.key
+    certificate: /etc/authelia/certs/wildcard_fullchain.crt
+
+log:
+  level: debug
+  file_path: /var/log/authelia.log
+
+totp:
+  issuer: sandbox-auth.example.com
+
+webauthn:
+  disable: false
+  display_name: Authelia
+  attestation_conveyance_preference: indirect
+  user_verification: discouraged
+  timeout: 60s
+
+ntp:
+  address: "0.de.pool.ntp.org:123"
+  version: 4
+  max_desync: 3s
+  disable_startup_check: false
+
+authentication_backend:
+  file:
+    path: /etc/authelia/.users/users_database.yml
+    password:
+      algorithm: argon2id
+      iterations: 1
+      key_length: 32
+      salt_length: 16
+      memory: 1024
+      parallelism: 8
+
+access_control:
+  default_policy: deny
+  rules: ### OPTIONAL SETTING
+    # 2fa
+    - domain: example.com
+      policy: one_factor
+
+session:
+  name: authelia_session
+  expiration: 3600  # 1 hour
+  inactivity: 300  # 5 minutes
+  domain: sandbox-auth.example.com
+  same_site: lax
+  remember_me_duration: 7d
+
+regulation:
+  max_retries: 3
+  find_time: 120
+  ban_time: 300
+
+storage:
+  local:
+    path: /etc/authelia/.db/sqlite3.db
+
+
+notifier: 
+  disable_startup_check: false
+  smtp:
+    host: smtp.example.com
+    port: 25
+    timeout: 5s
+    sender: "Authentication Service <noreply@auth.example.com>"
+    subject: "{title}"
+    startup_check_address: debug@example.com
+    disable_require_tls: false
+    disable_starttls: false
+    disable_html_emails: false
+    tls:
+      skip_verify: true
+      minimum_version: TLS1.2
+
+###############################################################
+# OpenID endpoints
+###############################################################
+
+identity_providers: ### OPTIONAL SETTING
+  oidc:
+    access_token_lifespan: 1h
+    authorize_code_lifespan: 1m
+    id_token_lifespan: 1h
+    refresh_token_lifespan: 90m
+    enable_client_debug_messages: false
+    enforce_pkce: public_clients_only
+    cors:
+      endpoints:
+        - authorization
+        - token
+        - revocation
+        - introspection
+      allowed_origins:
+        - "*"
+      allowed_origins_from_client_redirect_uris: false
+    clients:
+# ###################
+    - id: nextcloud
+# ###################
+      description: NextCloud
+      secret: '$plaintext$qUykh83Fw8qGtf5Y8ZJmG4DIJtm0ygQgSypLfsBNTDhLT75gecWjg65moab0B1bV'
+      public: false
+      authorization_policy: two_factor
+      redirect_uris:
+        - https://sandbox-nextcloud.example.com/apps/oidc_login/oidc
+        - https://sandbox-nextcloud.example.com/index.php/apps/oidc_login/oidc
+
+      scopes:
+        - openid
+        - profile
+        - email
+        - groups
+      userinfo_signing_algorithm: none
+# ###################
+    - id: proxmox
+# ###################
+      description: Proxmox
+      secret: '$plaintext$urydGen3fhWDB5SX2hZNpXYtH7k7f8NDzdQ7lKUJ4hMOT6j4TDETq1r42Kwy6rDH'
+      public: false
+      authorization_policy: two_factor
+      redirect_uris:
+        - https://sandbox-proxmox.example.com:8006
+      scopes:
+        - openid
+        - profile
+        - email
+      userinfo_signing_algorithm: none
+# ###################
+    - id: portainer
+# ###################
+      description: Portainer
+      secret: '$plaintext$useNgEpSkm7Z59MOl1Fo97axf5HVAEfyDhV4NRJkDw9lYKMRIu3YBCtO3vsQaePZ'
+      public: false
+      authorization_policy: one_factor
+      redirect_uris:
+        - https://sandbox-docker.example.com:9443
+      scopes:
+        - openid
+        - profile
+        - groups
+        - email
+      userinfo_signing_algorithm: none
+# ###################
+    - id: gitea
+# ###################
+      description: Gitea
+      secret: '$plaintext$frwhgwrthwrthwrthwethwgfhwrhtwrthwrthwrhgwdfgjzrwthrth'
+      public: false
+      authorization_policy: one_factor
+      redirect_uris:
+        - https://sandbox-gitea.example.com:3000/user/oauth2/authelia/callback
+      scopes:
+        - openid
+        - email
+        - profile
+      userinfo_signing_algorithm: none
