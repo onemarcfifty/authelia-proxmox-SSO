@@ -32,7 +32,7 @@ systemctl restart ssh
 
 ## Watch the video on YouTube
 
-The necessary changes to the config files and how to implement SSO are outlined in [This video](https://youtube.com). In the video we implement SSO for 
+The necessary changes to the config files and how to implement SSO are outlined in [This video](https://youtu.be/FMMCLt9TM2U). In the video we implement SSO for 
 
 - Nextcloud
 - Proxmox
