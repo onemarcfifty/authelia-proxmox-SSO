@@ -1,5 +1,7 @@
 # authelia-proxmox-SSO
 
+![language](https://img.shields.io/github/languages/top/onemarcfifty/authelia-proxmox-SSO)    ![License](https://img.shields.io/github/license/onemarcfifty/authelia-proxmox-SSO)    ![Last Commit](https://img.shields.io/github/last-commit/onemarcfifty/authelia-proxmox-SSO)     ![FileCount](https://img.shields.io/github/directory-file-count/onemarcfifty/authelia-proxmox-SSO)    ![Stars](https://img.shields.io/github/stars/onemarcfifty/authelia-proxmox-SSO)    ![Forks](https://img.shields.io/github/forks/onemarcfifty/authelia-proxmox-SSO)
+
 Automated install for Authelia running in a container e.g. on Proxmox
 
 You can use this repository in order to run an automated installation of Authelia into e.g. a Proxmox Container. If you want to run it in Proxmox, do the following:
